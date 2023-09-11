@@ -3,29 +3,37 @@ const cron = require("node-cron"); // importamos el módulo
 
 const whatsappChatIdentifier = "LosSextech Historia Season";
 const notionURL = "https://www.notion.so/23eb2ae6f225461485d061f389c78017?v=9a9851ad97e0410483230cfe2f84bce8";
+const scheduleBot = false;
 
-cron.schedule("0 10,14,17 * * *", () => {
-   (async () => {
-      const browser = await chromium.launchPersistentContext("C:/Users/jess/AppData/Local/Google/Chrome/User Data/Default", {
-         channel: "chrome",
-         headless: false,
-         userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
-         slowMo: 400,
+(async () => {
+   if (scheduleBot) {
+      cron.schedule("0 10,14,17 * * *", async () => {
+         await startBot();
       });
+   } else {
+      await startBot();
+   }
+})();
 
-      const page = await browser.newPage();
-      const dolarPrices = await getDolarPrices(page);
+async function startBot() {
+   const browser = await chromium.launchPersistentContext("C:/Users/jess/AppData/Local/Google/Chrome/User Data/Default", {
+      channel: "chrome",
+      headless: true,
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+      slowMo: 400,
+   });
 
-      await writeDolarMessage(page, dolarPrices);
+   const page = await browser.newPage();
+   const dolarPrices = await getDolarPrices(page);
 
-      await createNewNotionPage(page, dolarPrices);
+   await writeDolarMessage(page, dolarPrices);
 
-      setTimeout(async () => {
-         await browser.close();
-      }, 1000);
-   })();
-});
+   await createNewNotionPage(page, dolarPrices);
 
+   setTimeout(async () => {
+      await browser.close();
+   }, 1000);
+}
 async function getDolarPrices(page) {
    let dolarBCV, dolarBlue;
    try {
