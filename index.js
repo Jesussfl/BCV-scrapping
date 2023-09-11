@@ -1,9 +1,9 @@
 const { chromium } = require("playwright");
-const cron = require("node-cron"); // importamos el módulo
+const cron = require("node-cron");
 
 const whatsappChatIdentifier = "LosSextech Historia Season";
 const notionURL = "https://www.notion.so/23eb2ae6f225461485d061f389c78017?v=9a9851ad97e0410483230cfe2f84bce8";
-const scheduleBot = false;
+const scheduleBot = true;
 
 (async () => {
    if (scheduleBot) {
